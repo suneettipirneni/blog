@@ -3,9 +3,10 @@ import type { SocialObjects } from "./types";
 export const SITE = {
   website: "https://astro-paper.pages.dev/",
   author: "Suneet Tipirneni",
-  desc: "A minimal, responsive and SEO-friendly Astro blog theme.",
+  desc: "An epic blog site",
   title: "Yet another Blog",
-  ogImage: "astropaper-og.jpg",
+  ogImage:
+    "https://images.unsplash.com/photo-1561131989-b8112bafbd43?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=987&q=80",
   lightAndDarkMode: true,
   postPerPage: 3,
 };
