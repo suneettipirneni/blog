@@ -10,7 +10,7 @@ import mdx from "@astrojs/mdx";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://astro-paper.pages.dev/",
+  site: "https://suneettipirneni.stream/",
   integrations: [
     tailwind({
       config: {
