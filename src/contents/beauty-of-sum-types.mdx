@@ -1,0 +1,158 @@
+---
+author: Suneet Tipirneni
+datetime: 2023-01-26T19:42:11.356Z
+title: The beauty of sum types
+slug: beauty-of-sum-types
+featured: true
+draft: true
+tags:
+  - design
+ogImage: ""
+description: Sum types, my beloved.
+---
+
+# Sum Types, more like the _best_ types
+
+The sum type the is best thing to come out since sliced bread. In my early days of programming my life was constricted to the domain
+of product types. Behaviour was shared through inheritance and polymorphism. There's a fatal flaw with this approach though. It's open
+and cannot be exhaustively matched. This is a problem because it means that you can't be sure that you've handled all the variants of a
+product type.
+
+## The problem with product types
+
+Consider a Java interface defined like so:
+
+```java
+interface Animal {
+  String name();
+  int age();
+  String sound();
+}
+```
+
+We'll then add some variants:
+
+```java
+record Dog(String name, int age, String sound) implements Animal {
+  public Dog(String name, int age) {
+    this(name, age, "Woof");
+  }
+
+  public void walk() {
+    System.out.println("Walking " + this.name());
+  }
+}
+
+record Cat(String name, int age, String sound) implements Animal {
+  public Cat(String name, int age) {
+    this(name, age, "Meow");
+  }
+
+  public void cleanLitterBox() {
+    System.out.println("Cleaning litter box for " + this.name());
+  }
+}
+
+record Cow(String name, int age, String sound) implements Animal {
+  public Rhino(String name, int age) {
+    this(name, age, "Moo");
+  }
+}
+```
+
+I now have a new requirement I want to model `Animal`s that can be house pets. So now I'll introduce a new interface:
+
+```java
+interface HousePet extends Animal {
+  default void takeCareOf() {
+    System.out.println("Taking care of " + this.name());
+  }
+}
+```
+
+I'll then make sure `Dog` and `Cat` implement `HousePet`:
+
+```diff
+- record Dog(String name, int age, String sound) implements Animal
++ record Dog(String name, int age, String sound) implements HousePet
+- record Cat(String name, int age, String sound) implements Animal
++ record Cat(String name, int age, String sound) implements HousePet
+```
+
+This is great! I can now use a constraint to handle cases specifically for `HousePet`s:
+
+```java
+void takeCareOfHousePets(List<HousePet> animals) {
+  for (Animal animal : animals) {
+    animal.takeCareOf();
+  }
+}
+```
+
+I also need to handle specific tasks for each kind of `HousePet`, so I do this:
+
+```Java
+void takeCareOfHousePets(List<HousePet> animals) {
+  for (Animal animal : animals) {
+    if (animal instanceof Dog) {
+      ((Dog) animal).walk();
+    } else if (animal instanceof Cat) {
+      ((Cat) animal).cleanLitterBox();
+    }
+
+    throw new Exception("Not sure how to handle " + animal);
+  }
+}
+```
+
+I've just realized that I can't exhaustively handle all the cases for `HousePet` since it's always open to be implemented. So instead I throw an error.
+This works great! I _know_ the only two cases that are `HousePet`s are `Dog` and `Cat`, so I shouldn't have to worry about the exception being thrown, right?
+
+Well, a user of my library decides to implement `HousePet` for their own `Animal` variant:
+
+```java
+record Snake(String name, int age, String sound) implements HousePet {
+  public Snake(String name, int age) {
+    this(name, age, "Hiss");
+  }
+
+  public void shedSkin() {
+    System.out.println("Shedding skin for " + this.name());
+  }
+}
+```
+
+When they call `takeCareOfHousePets` they get an exception thrown. This is because I didn't handle the case for `Snake` in my `takeCareOfHousePets` method.
+
+```java
+// Exception: Not sure how to handle Snake[name=Sneaky, age=1, sound=Hiss]
+takeCareOfHousePets(new List<>(new Dog("Fido", 3), new Cat("Garfield", 5), new Snake("Sneaky", 1)));
+```
+
+My code wasn't designed for people to add their own variants. However, due to the nature of access-control and interfaces, they can.
+
+Many jaded java developers would simply accept throwing an exception as a valid solution to this problem. However exception throwing is a last resort. It's a
+hack to get around the fact that you can't exhaustively match on a product type. I would be so much better if this could be validated at compiled time.
+
+This is where sum types come to the rescue.
+
+## Sum types to the rescue
+
+In earlier versions of java the concept of a sum type was essentially using an enum with an associated value:
+
+We would remodel our code above to this:
+
+```java
+public enum HousePet {
+  DOG(new Dog()),
+  CAT(new Cat()),
+
+  constructor (Animal animal) {
+    this.animal = animal;
+  }
+}
+```
+
+So why do we call this a sum type? It's called a sum type because the type is the sum of all its variants. In this case, the type is the sum of `Dog` and `Cat`.
+
+More specifically it's a sum of product types.
