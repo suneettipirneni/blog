@@ -5,5 +5,8 @@
     "paths": {
       "@*": ["./src/*"]
     }
+  },
+  "mdx": {
+    "plugins": [["remark-frontmatter", ["toml", "yaml"]], "remark-gfm"]
   }
 }
