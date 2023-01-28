@@ -16,6 +16,7 @@
   "dependencies": {
     "@astrojs/mdx": "^0.15.0",
     "@astrojs/rss": "^1.0.3",
+    "@vercel/analytics": "^0.1.8",
     "astro": "^1.9.2",
     "fuse.js": "^6.6.2",
     "github-slugger": "^2.0.0",
