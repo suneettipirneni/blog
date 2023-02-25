@@ -20,7 +20,7 @@ export default function Card({ href, post, secHeading = true }: Props) {
   return (
     <a href="# w-full">
       <div
-        className={`flex items-center overflow-clip space-x-2 h-[${height}px] rounded-xl border border-gray-200 shadow-sm`}
+        className={`flex items-center overflow-clip space-x-2 h-[${height}px] rounded-xl border border-slate-500 shadow-sm`}
       >
         <img
           className={`object-cover h-[100px] w-[100px]`}

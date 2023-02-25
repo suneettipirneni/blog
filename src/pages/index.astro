@@ -83,7 +83,7 @@ const socialCount = SOCIALS.filter(social => social.active).length;
 
     <section id="recent-posts">
       <h2>Recent Posts</h2>
-      <ul>
+      <ul class="space-y-4">
         {
           sortedPosts.map(
             ({ frontmatter }, index) =>
