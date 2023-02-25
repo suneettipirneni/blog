@@ -76,10 +76,10 @@ instance Driveable a => Driveable (Maybe a) where
 impl<T: Driveable> Driveable for Option<T> {
   fn drive(&self) -> String {
     if let Some(a) = self {
-      a.drive()
-    } else {
-      "Nothing to drive".to_string()
+      return a.drive()
     }
+
+    "Nothing to drive".to_string()
   }
 }
 ```
